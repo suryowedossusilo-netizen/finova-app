@@ -36,8 +36,10 @@ const appState = loadState();
 document.addEventListener("DOMContentLoaded", () => {
   if (window.lucide) lucide.createIcons();
   ensureHistorySection();
+  setupBottomPages();
   bindExistingControls();
   updateUI();
+  showAppPage("home");
 });
 
 function persistState() {
@@ -90,6 +92,7 @@ function updateUI() {
   renderCustomPockets();
   renderTransactions();
   persistState();
+  updatePageSummaries();
   if (window.lucide) lucide.createIcons();
 }
 
@@ -171,23 +174,139 @@ function renderTransactions() {
   });
 }
 
+function setupBottomPages() {
+  const main = document.querySelector("main");
+  const nav = document.querySelector("nav");
+  if (!main || !nav || document.getElementById("finova-page-home")) return;
+
+  const children = [...main.children];
+  const header = children.find(el => el.tagName === "HEADER");
+  const balance = children.find(el => el.querySelector("#total-balance"));
+  const quickActions = children.find(el => el.querySelector("button span")?.textContent.trim() === "Bayar");
+  const pockets = children.find(el => el.querySelector("h3")?.textContent.trim() === "Daftar Pocket");
+  const advice = children.find(el => el.querySelector("#ai-tip-text"));
+  const history = children.find(el => el.id === "finova-history");
+
+  const makePage = (id, title) => {
+    const page = document.createElement("section");
+    page.id = "finova-page-" + id;
+    page.dataset.appPage = id;
+    page.className = "space-y-5";
+    if (id !== "home") {
+      const heading = document.createElement("div");
+      heading.className = "space-y-1 pb-1";
+      heading.innerHTML = '<p class="text-xs font-semibold uppercase tracking-widest text-blue-600">FINOVA</p><h2 class="text-2xl font-bold text-slate-800"></h2><p class="text-xs text-slate-500">Kelola keuanganmu dengan lebih teratur.</p>';
+      heading.querySelector("h2").textContent = title;
+      page.appendChild(heading);
+    }
+    main.appendChild(page);
+    return page;
+  };
+
+  const home = makePage("home", "Home");
+  [header, balance, quickActions, advice, history].filter(Boolean).forEach(el => home.appendChild(el));
+
+  const pocketPage = makePage("pockets", "Pocket Saya");
+  if (pockets) pocketPage.appendChild(pockets);
+  const customPockets = document.getElementById("custom-pockets");
+  if (customPockets && !pocketPage.contains(customPockets)) pocketPage.appendChild(customPockets);
+
+  const analysis = makePage("analysis", "Analisis Keuangan");
+  analysis.insertAdjacentHTML("beforeend", `
+    <div class="grid grid-cols-2 gap-3">
+      <article class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm"><p class="text-xs text-slate-500">Total saldo</p><p id="page-analysis-balance" class="text-lg font-bold text-slate-800 mt-2">Rp 0</p></article>
+      <article class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm"><p class="text-xs text-slate-500">Jumlah transaksi</p><p id="page-analysis-count" class="text-lg font-bold text-slate-800 mt-2">0</p></article>
+      <article class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm"><p class="text-xs text-slate-500">Dana masuk tercatat</p><p id="page-analysis-income" class="text-base font-bold text-emerald-600 mt-2">Rp 0</p></article>
+      <article class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm"><p class="text-xs text-slate-500">Pembayaran tercatat</p><p id="page-analysis-expenses" class="text-base font-bold text-rose-600 mt-2">Rp 0</p></article>
+    </div>
+    <div class="bg-blue-50 rounded-2xl p-4 border border-blue-100"><p class="text-sm font-semibold text-slate-800">Ringkasan keuangan</p><p id="page-analysis-note" class="text-xs text-slate-600 mt-2 leading-relaxed">Data berdasarkan transaksi simulasi yang tersimpan pada browser ini.</p></div>
+    <button type="button" id="page-analysis-history" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-semibold text-blue-700">Lihat semua transaksi</button>
+  `);
+
+  const profile = makePage("profile", "Profil Saya");
+  profile.insertAdjacentHTML("beforeend", `
+    <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm text-center">
+      <div class="w-20 h-20 mx-auto rounded-full bg-blue-50 text-blue-700 flex items-center justify-center text-2xl font-bold" id="page-profile-avatar">SW</div>
+      <h3 id="page-profile-name" class="font-bold text-slate-800 text-lg mt-3">Suryo Wedo</h3>
+      <p class="text-xs text-slate-500 mt-1">Finova Smart Wallet</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+      <button type="button" id="page-profile-edit" class="w-full p-4 text-left flex items-center gap-3 border-b border-slate-100"><span class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">✎</span><span class="flex-1"><span class="block text-sm font-semibold text-slate-800">Edit profil</span><span class="block text-xs text-slate-500 mt-1">Ubah nama tampilan</span></span><span class="text-slate-400">›</span></button>
+      <button type="button" id="page-profile-reset" class="w-full p-4 text-left flex items-center gap-3"><span class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">↻</span><span class="flex-1"><span class="block text-sm font-semibold text-rose-600">Reset data simulasi</span><span class="block text-xs text-slate-500 mt-1">Kembalikan saldo dan pocket ke kondisi awal</span></span><span class="text-slate-400">›</span></button>
+    </div>
+    <p class="text-[11px] text-slate-400 leading-relaxed">Finova saat ini merupakan demo. Data tersimpan di browser/perangkat ini dan belum terhubung ke rekening bank.</p>
+  `);
+
+  nav.querySelectorAll("button").forEach((button, index) => {
+    const page = ["home", "pockets", "pay", "analysis", "profile"][index];
+    if (!page) return;
+    button.dataset.page = page;
+    button.dataset.finovaBound = "true";
+    if (page !== "pay") button.addEventListener("click", () => showAppPage(page));
+  });
+  document.getElementById("page-analysis-history")?.addEventListener("click", () => openActionModal("history"));
+  document.getElementById("page-profile-edit")?.addEventListener("click", () => openActionModal("profile"));
+  document.getElementById("page-profile-reset")?.addEventListener("click", () => {
+    if (!confirm("Reset seluruh saldo, pocket, dan riwayat simulasi di perangkat ini?")) return;
+    const fresh = defaultState();
+    appState.totalSalary = fresh.totalSalary;
+    appState.pockets = fresh.pockets;
+    appState.transactions = fresh.transactions;
+    appState.profileName = fresh.profileName;
+    appState.pendingTransaction = null;
+    persistState();
+    updateUI();
+    showToast("Data simulasi dikembalikan ke awal.");
+  });
+}
+
+function showAppPage(pageName) {
+  const pages = document.querySelectorAll("[data-app-page]");
+  if (!pages.length) return;
+  const target = document.getElementById("finova-page-" + pageName);
+  if (!target) return;
+  pages.forEach(page => page.classList.toggle("hidden", page !== target));
+  const nav = document.querySelector("nav");
+  nav?.querySelectorAll("button[data-page]").forEach(button => {
+    const active = button.dataset.page === pageName;
+    button.classList.toggle("text-blue-600", active);
+    button.classList.toggle("text-slate-400", !active && button.dataset.page !== "pay");
+    button.classList.toggle("font-semibold", active);
+    button.setAttribute("aria-current", active ? "page" : "false");
+  });
+  const main = document.querySelector("main");
+  if (main) main.scrollTop = 0;
+  updatePageSummaries();
+  if (window.lucide) lucide.createIcons();
+}
+
+function updatePageSummaries() {
+  const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+  const income = appState.transactions.filter(tx => ["Top Up", "Gaji Masuk"].includes(tx.type)).reduce((sum, tx) => sum + tx.amount, 0);
+  const expenses = appState.transactions.filter(tx => tx.type === "Pembayaran").reduce((sum, tx) => sum + tx.amount, 0);
+  setText("page-analysis-balance", formatRupiah(getTotalBalance()));
+  setText("page-analysis-count", String(appState.transactions.length));
+  setText("page-analysis-income", formatRupiah(income));
+  setText("page-analysis-expenses", formatRupiah(expenses));
+  setText("page-analysis-note", appState.transactions.length
+    ? "Terdapat " + appState.transactions.length + " aktivitas simulasi. Saldo dan ringkasan ini dihitung dari data yang tersimpan di browser ini."
+    : "Belum ada aktivitas. Coba lakukan pembayaran, transfer, atau top up untuk mulai melihat ringkasan.");
+  setText("page-profile-name", appState.profileName || "Pengguna Finova");
+  setText("page-profile-avatar", (appState.profileName || "F").trim().split(/\\s+/).map(part => part[0]).join("").slice(0, 2).toUpperCase());
+}
+
 function bindExistingControls() {
-  // Connect controls that were previously visual-only.
   const buttons = [...document.querySelectorAll("button")];
   buttons.forEach(button => {
-    const label = button.innerText.trim().replace(/\s+/g, " ").toLowerCase();
+    const label = button.innerText.trim().replace(/\\s+/g, " ").toLowerCase();
     if (button.onclick || button.dataset.finovaBound) return;
     button.dataset.finovaBound = "true";
-
     if (label === "transfer") button.addEventListener("click", () => openActionModal("transfer"));
     else if (label === "top up") button.addEventListener("click", () => openActionModal("topup"));
     else if (label === "lainnya") button.addEventListener("click", () => openActionModal("more"));
     else if (label.includes("buat pocket")) button.addEventListener("click", () => openActionModal("create-pocket"));
     else if (button.querySelector('[data-lucide="bell"]')) button.addEventListener("click", () => openActionModal("notifications"));
-    else if (label === "home") button.addEventListener("click", () => { window.scrollTo({ top: 0, behavior: "smooth" }); document.querySelector("main")?.scrollTo({ top: 0, behavior: "smooth" }); });
-    else if (label === "pockets") button.addEventListener("click", () => document.querySelector("main section h3")?.scrollIntoView({ behavior: "smooth", block: "start" }));
-    else if (label === "analisis") button.addEventListener("click", () => openActionModal("analysis"));
-    else if (label === "profil") button.addEventListener("click", () => openActionModal("profile"));
+    else if (label === "home" || label === "pockets" || label === "analisis" || label === "profil") return;
   });
 }
 
