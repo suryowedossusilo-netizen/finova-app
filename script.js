@@ -292,13 +292,13 @@ function updatePageSummaries() {
     ? "Terdapat " + appState.transactions.length + " aktivitas simulasi. Saldo dan ringkasan ini dihitung dari data yang tersimpan di browser ini."
     : "Belum ada aktivitas. Coba lakukan pembayaran, transfer, atau top up untuk mulai melihat ringkasan.");
   setText("page-profile-name", appState.profileName || "Pengguna Finova");
-  setText("page-profile-avatar", (appState.profileName || "F").trim().split(/\\s+/).map(part => part[0]).join("").slice(0, 2).toUpperCase());
+  setText("page-profile-avatar", (appState.profileName || "F").trim().split(/\s+/).map(part => part[0]).join("").slice(0, 2).toUpperCase());
 }
 
 function bindExistingControls() {
   const buttons = [...document.querySelectorAll("button")];
   buttons.forEach(button => {
-    const label = button.innerText.trim().replace(/\\s+/g, " ").toLowerCase();
+    const label = button.innerText.trim().replace(/\s+/g, " ").toLowerCase();
     if (button.onclick || button.dataset.finovaBound) return;
     button.dataset.finovaBound = "true";
     if (label === "transfer") button.addEventListener("click", () => openActionModal("transfer"));
