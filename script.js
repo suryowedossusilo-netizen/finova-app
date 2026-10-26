@@ -175,7 +175,7 @@ function bindExistingControls() {
   // Connect controls that were previously visual-only.
   const buttons = [...document.querySelectorAll("button")];
   buttons.forEach(button => {
-    const label = button.innerText.trim().replace(/\\s+/g, " ").toLowerCase();
+    const label = button.innerText.trim().replace(/\s+/g, " ").toLowerCase();
     if (button.onclick || button.dataset.finovaBound) return;
     button.dataset.finovaBound = "true";
 
