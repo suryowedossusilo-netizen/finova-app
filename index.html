@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finova - AI Smart Wallet for Gen Z</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-100 font-['Inter'] min-h-screen flex items-center justify-center p-0 md:p-6">
+
+  <!-- Mobile Simulator Container -->
+  <div class="w-full max-w-md bg-slate-50 h-screen md:h-[880px] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative border-0 md:border-[8px] border-slate-800">
+    
+    <!-- Top Status Bar (Mobile Style) -->
+    <div class="bg-white px-6 pt-3 pb-2 flex justify-between items-center text-xs text-slate-500 font-medium select-none">
+      <span>9:41</span>
+      <div class="flex items-center gap-1.5">
+        <i data-lucide="signal" class="w-3.5 h-3.5"></i>
+        <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
+        <i data-lucide="battery" class="w-3.5 h-3.5"></i>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 overflow-y-auto px-5 py-4 pb-24 space-y-5 custom-scrollbar">
+
+      <!-- APP HEADER -->
+      <header class="flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center border border-blue-200">
+            SW
+          </div>
+          <div>
+            <div class="flex items-center gap-1">
+              <h1 class="font-bold text-slate-800 text-base">Suryo Wedo</h1>
+              <i data-lucide="badge-check" class="w-4 h-4 text-emerald-500 fill-emerald-100"></i>
+            </div>
+            <p class="text-xs text-slate-400">Pro Member • Gen Z Wallet</p>
+          </div>
+        </div>
+        <button class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 relative hover:bg-slate-50">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+        </button>
+      </header>
+
+      <!-- MAIN BALANCE & AI AUTO-ALLOCATE CARD -->
+      <section class="finova-gradient p-5 rounded-3xl text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+        
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <p class="text-xs text-blue-100/80 font-medium">Total Balance</p>
+            <h2 id="total-balance" class="text-2xl font-bold tracking-tight mt-0.5">Rp 5.000.000</h2>
+          </div>
+          <span class="bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-semibold text-emerald-300 flex items-center gap-1 border border-white/20">
+            <i data-lucide="sparkles" class="w-3 h-3"></i> AI Auto-Split
+          </span>
+        </div>
+
+        <!-- Simulated Income Input -->
+        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/15 mt-3">
+          <div class="flex justify-between items-center text-xs mb-1.5 text-blue-50">
+            <span>Simulasi Gaji Masuk:</span>
+            <span class="font-semibold text-emerald-300">Rp 5.000.000</span>
+          </div>
+          <button id="btn-auto-split" onclick="triggerAutoSplit()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md active:scale-[0.98]">
+            <i data-lucide="bot" class="w-4 h-4"></i>
+            <span>Jalankan AI Auto-Split</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- QUICK ACTIONS -->
+      <section class="grid grid-cols-4 gap-3">
+        <button onclick="openPaymentModal()" class="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-white transition-all group">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+            <i data-lucide="qr-code" class="w-6 h-6"></i>
+          </div>
+          <span class="text-[11px] font-medium text-slate-600">Bayar</span>
+        </button>
+        <button class="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-white transition-all group">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
+            <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+          </div>
+          <span class="text-[11px] font-medium text-slate-600">Transfer</span>
+        </button>
+        <button class="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-white transition-all group">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+            <i data-lucide="plus-circle" class="w-6 h-6"></i>
+          </div>
+          <span class="text-[11px] font-medium text-slate-600">Top Up</span>
+        </button>
+        <button class="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-white transition-all group">
+          <div class="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 group-hover:bg-slate-800 group-hover:text-white transition-all shadow-sm">
+            <i data-lucide="more-horizontal" class="w-6 h-6"></i>
+          </div>
+          <span class="text-[11px] font-medium text-slate-600">Lainnya</span>
+        </button>
+      </section>
+
+      <!-- WALLET POCKETS SECTION -->
+      <section class="space-y-3">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm">Daftar Pocket</h3>
+            <p class="text-[11px] text-slate-400">Atur dan alokasikan batas pengeluaranmu</p>
+          </div>
+          <button class="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Buat Pocket
+          </button>
+        </div>
+
+        <div class="space-y-2.5">
+          <!-- Pocket 1: Bensin -->
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
+                <i data-lucide="fuel" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 text-xs">Pocket Bensin</h4>
+                <p class="text-[10px] text-slate-400">Limit Set: Rp 700.000</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p id="bensin-balance" class="font-bold text-xs text-slate-800">Rp 700.000</p>
+              <span class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[9px] font-medium border border-emerald-100">Aman</span>
+            </div>
+          </div>
+
+          <!-- Pocket 2: Makan & Jajan -->
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600">
+                <i data-lucide="utensils" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 text-xs">Makan & Jajan</h4>
+                <p class="text-[10px] text-slate-400">Limit Set: Rp 1.000.000</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p id="makan-balance" class="font-bold text-xs text-slate-800">Rp 1.000.000</p>
+              <span class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[9px] font-medium border border-emerald-100">Aman</span>
+            </div>
+          </div>
+
+          <!-- Pocket 3: Emergency Buffer (Dana Darurat) -->
+          <div class="bg-emerald-50/50 p-3.5 rounded-2xl border border-emerald-200/60 shadow-sm flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-sm">
+                <i data-lucide="shield-alert" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-1">
+                  <h4 class="font-semibold text-slate-800 text-xs">Dana Darurat</h4>
+                  <span class="text-[9px] bg-emerald-100 text-emerald-700 font-bold px-1.5 py-0.2 rounded">Sisa Gaji</span>
+                </div>
+                <p class="text-[10px] text-slate-500">Auto-Fallback Overlimit</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p id="emergency-balance" class="font-bold text-xs text-emerald-700">Rp 3.300.000</p>
+              <span class="inline-block px-2 py-0.5 rounded-full bg-white text-emerald-600 text-[9px] font-semibold border border-emerald-200">Backup Active</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI SMART ADVICE CARD -->
+      <section class="bg-gradient-to-r from-blue-50 to-emerald-50 rounded-2xl p-3.5 border border-blue-100 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+          <i data-lucide="brain-circuit" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-slate-800">AI Financial Health Tip</h4>
+          <p id="ai-tip-text" class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
+            Semua alokasi dompet dalam kondisi ideal. Cobalah untuk melakukan simulasi transaksi untuk menguji fitur overlimit.
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-100 px-6 py-2.5 flex justify-between items-center z-10">
+      <button class="flex flex-col items-center gap-1 text-blue-600">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold">Home</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+        <i data-lucide="wallet" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Pockets</span>
+      </button>
+      <!-- Middle QRIS Floating Button -->
+      <button onclick="openPaymentModal()" class="w-12 h-12 rounded-full finova-gradient text-white flex items-center justify-center shadow-lg shadow-blue-500/30 -mt-5 hover:scale-105 transition-all">
+        <i data-lucide="qr-code" class="w-6 h-6"></i>
+      </button>
+      <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+        <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Analisis</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+        <i data-lucide="user" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Profil</span>
+      </button>
+    </nav>
+
+    <!-- MODAL 1: QRIS PAYMENT INTERFACE -->
+    <div id="modal-payment" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-0 md:p-4 hidden">
+      <div class="bg-white w-full max-w-md rounded-t-3xl md:rounded-3xl p-5 space-y-4 animate-slide-up">
+        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <i data-lucide="qr-code" class="w-5 h-5 text-blue-600"></i>
+            <h3 class="font-bold text-slate-800 text-sm">Pembayaran QRIS / Merchant</h3>
+          </div>
+          <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="text-[11px] font-medium text-slate-500 mb-1 block">Pilih Pocket Sumber Dana</label>
+            <select id="select-pocket" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+              <option value="bensin">Pocket Bensin (Sisa: Rp 700.000)</option>
+              <option value="makan">Pocket Makan & Jajan (Sisa: Rp 1.000.000)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-[11px] font-medium text-slate-500 mb-1 block">Nominal Tagihan (Rp)</label>
+            <input type="number" id="input-amount" placeholder="Masukkan nominal (contoh: 750000)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+            <p class="text-[10px] text-slate-400 mt-1">Tips: Masukkan angka > 700.000 pada Pocket Bensin untuk menguji sistem AI Overlimit.</p>
+          </div>
+        </div>
+
+        <button onclick="processPayment()" class="w-full finova-gradient text-white font-bold py-3 rounded-xl text-xs shadow-md hover:opacity-95 transition-all">
+          Lanjutkan Pembayaran
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 2: AI OVERLIMIT WARNING FALLBACK -->
+    <div id="modal-overlimit" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 border border-amber-200 shadow-2xl animate-pop">
+        
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
+          <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+        </div>
+
+        <div class="text-center space-y-1">
+          <h3 class="font-bold text-slate-800 text-base">Pocket Overlimit!</h3>
+          <p class="text-xs text-slate-500">Saldo pada pocket terpilih tidak mencukupi untuk transaksi ini.</p>
+        </div>
+
+        <!-- Transaction Break Down -->
+        <div class="bg-amber-50/60 rounded-2xl p-3 border border-amber-100 space-y-2 text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Total Tagihan:</span>
+            <span id="ov-total" class="font-bold text-slate-800">Rp 0</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Sisa Saldo Pocket:</span>
+            <span id="ov-pocket-balance" class="font-semibold text-rose-600">Rp 0</span>
+          </div>
+          <div class="border-t border-amber-200/60 pt-2 flex justify-between text-emerald-700 font-bold">
+            <span>Ditarik dari Dana Darurat:</span>
+            <span id="ov-shortage">Rp 0</span>
+          </div>
+        </div>
+
+        <div class="bg-blue-50 rounded-xl p-2.5 flex items-center gap-2 border border-blue-100">
+          <i data-lucide="bot" class="w-4 h-4 text-blue-600 flex-shrink-0"></i>
+          <p class="text-[10px] text-blue-800 leading-tight">
+            AI Finova siap mengalihkan kekurangan dana secara otomatis dari **Dana Darurat (Sisa Gaji)**.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <button onclick="confirmEmergencyFallback()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition-all">
+            Ya, Pakai Dana Darurat
+          </button>
+          <button onclick="closeOverlimitModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2.5 rounded-xl text-xs transition-all">
+            Batalkan Transaksi
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Custom JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
